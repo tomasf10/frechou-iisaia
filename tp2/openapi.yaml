@@ -1,0 +1,261 @@
+openapi: 3.1.0
+info:
+  title: API de mascotas y paseos
+  description: >-
+    Administra mascotas y sus registros individuales de paseos. Cada paseo
+    pertenece a una única mascota y no existe fuera de ella.
+  version: 1.0.0
+  license:
+    name: Uso académico
+    identifier: LicenseRef-Academic-Use
+
+servers:
+  - url: https://api.example.test
+    description: URL ilustrativa; la API no está implementada
+
+security: []
+
+paths:
+  /pets:
+    get:
+      summary: Lista todas las mascotas
+      operationId: listPets
+      responses:
+        '200':
+          description: Lista de mascotas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+    post:
+      summary: Registra una mascota
+      operationId: createPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetInput'
+      responses:
+        '201':
+          description: Mascota registrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /pets/{petId}/walks:
+    parameters:
+      - $ref: '#/components/parameters/PetId'
+    get:
+      summary: Lista los paseos de una mascota
+      operationId: listPetWalks
+      responses:
+        '200':
+          description: Lista de paseos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Walk'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Registra un paseo para una mascota
+      operationId: createPetWalk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalkInput'
+      responses:
+        '201':
+          description: Paseo registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Walk'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /pets/{petId}/walks/{walkId}:
+    parameters:
+      - $ref: '#/components/parameters/PetId'
+      - $ref: '#/components/parameters/WalkId'
+    delete:
+      summary: Elimina un paseo de una mascota
+      operationId: deletePetWalk
+      responses:
+        '204':
+          description: Paseo eliminado
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  responses:
+    BadRequest:
+      description: Los datos enviados no cumplen el contrato
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: validation_error
+            message: Revisá los campos enviados
+    NotFound:
+      description: El recurso solicitado no existe
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: not_found
+            message: No se encontró la mascota o el paseo solicitado
+
+  parameters:
+    PetId:
+      name: petId
+      in: path
+      required: true
+      description: Identificador de la mascota
+      schema:
+        type: string
+        format: uuid
+    WalkId:
+      name: walkId
+      in: path
+      required: true
+      description: Identificador del paseo
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    Pet:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - species
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        species:
+          type: string
+          enum:
+            - dog
+            - cat
+            - other
+        birth_date:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+
+    PetInput:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - species
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        species:
+          type: string
+          enum:
+            - dog
+            - cat
+            - other
+        birth_date:
+          type: string
+          format: date
+
+    Walk:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - pet_id
+        - started_at
+        - duration_minutes
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        pet_id:
+          type: string
+          format: uuid
+        started_at:
+          type: string
+          format: date-time
+        duration_minutes:
+          type: integer
+          minimum: 1
+          maximum: 1440
+        distance_km:
+          type: number
+          format: double
+          minimum: 0
+        notes:
+          type: string
+          maxLength: 500
+        created_at:
+          type: string
+          format: date-time
+
+    WalkInput:
+      type: object
+      additionalProperties: false
+      required:
+        - started_at
+        - duration_minutes
+      properties:
+        started_at:
+          type: string
+          format: date-time
+        duration_minutes:
+          type: integer
+          minimum: 1
+          maximum: 1440
+        distance_km:
+          type: number
+          format: double
+          minimum: 0
+        notes:
+          type: string
+          maxLength: 500
+
+    Error:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          enum:
+            - validation_error
+            - not_found
+        message:
+          type: string
