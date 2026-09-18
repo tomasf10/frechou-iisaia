@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permiso Vecinal - Portal de Estacionamiento Municipal</title>
+    <style>
+        :root {
+            --bg-main: #f4f6f8;
+            --bg-card: #ffffff;
+            --bg-card-alt: #eef2f6;
+            --text-main: #0f2b3c;
+            --text-muted: #4a6375;
+            --text-light: #ffffff;
+            --primary: #153e54;
+            --primary-hover: #0f2b3c;
+            --accent-yellow: #e6a100;
+            --accent-yellow-dark: #b88100;
+            --accent-yellow-light: #fffbeb;
+            --border-color: #cbd5e1;
+            --border-dark: #94a3b8;
+            --danger: #c53030;
+            --danger-bg: #fff5f5;
+            --success: #22543d;
+            --success-bg: #f0fff4;
+            --radius: 8px;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --shadow-sm: 0 1px 3px rgba(15, 43, 60, 0.08);
+            --shadow-md: 0 4px 6px -1px rgba(15, 43, 60, 0.1), 0 2px 4px -1px rgba(15, 43, 60, 0.06);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .site-header {
+            background-color: var(--primary);
+            color: var(--text-light);
+            padding: 1rem 1.5rem;
+            border-bottom: 4px solid var(--accent-yellow);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge-simulated {
+            background-color: var(--accent-yellow);
+            color: #000000;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .step-indicator {
+            font-size: 0.9rem;
+            font-weight: 500;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .main-container {
+            max-width: 900px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+        }
+
+        .portal-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
+        }
+
+        .site-footer {
+            background-color: #e2e8f0;
+            border-top: 1px solid var(--border-color);
+            padding: 1.25rem 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+
+        .step-panel {
+            display: none;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid var(--bg-card-alt);
+            padding-bottom: 0.5rem;
+        }
+
+        .section-description {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.35rem;
+            color: var(--text-main);
+        }
+
+        .required-star {
+            color: var(--danger);
+            margin-left: 0.2rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            font-size: 1rem;
+            font-family: inherit;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background-color: #ffffff;
+            color: var(--text-main);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(21, 62, 84, 0.15);
+        }
+
+        .input-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 0.35rem;
+            display: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: var(--radius);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+            text-decoration: none;
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid var(--accent-yellow-dark);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--text-light);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-card-alt);
+            color: var(--text-main);
+            border-color: var(--border-color);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #cbd5e1;
+        }
+
+        .btn-warning {
+            background-color: var(--accent-yellow);
+            color: #000000;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background-color: var(--accent-yellow-dark);
+            color: #ffffff;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .verification-dashboard {
+            background-color: var(--bg-card-alt);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-box {
+            background-color: #ffffff;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0.2rem;
+            font-family: monospace;
+        }
+
+        .progress-display {
+            background-color: #ffffff;
+            border: 2px dashed var(--primary);
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .progress-slots {
+            font-family: monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            color: var(--primary);
+        }
+
+        .live-feedback {
+            min-height: 2.5rem;
+            padding: 0.5rem 0.85rem;
+            border-radius: var(--radius);
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .live-feedback.info {
+            color: var(--primary);
+            background-color: #e2e8f0;
+        }
+
+        .live-feedback.success {
+            color: var(--success);
+            background-color: var(--success-bg);
+            border-color: #b2f5ea;
+        }
+
+        .live-feedback.warning {
+            color: #742a2a;
+            background-color: var(--danger-bg);
+            border-color: #feb2b2;
+        }
+
+        .conveyor-section {
+            margin: 1.5rem 0;
+        }
+
+        .conveyor-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .conveyor-container {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            background-color: #1a202c;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 2px solid #2d3748;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 1.25rem;
+            user-select: none;
+        }
+
+        .conveyor-track {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            height: 60px;
+            display: flex;
+            gap: 10px;
+            will-change: transform;
+            white-space: nowrap;
+        }
+
+        .char-btn {
+            width: 50px;
+            height: 60px;
+            background: linear-gradient(180deg, #edf2f7 0%, #cbd5e1 100%);
+            border: 2px solid #475569;
+            border-radius: 6px;
+            color: #0f172a;
+            font-family: monospace;
+            font-size: 1.35rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 0 #334155, 0 4px 6px rgba(0,0,0,0.3);
+            transition: background 0.1s;
+            flex-shrink: 0;
+        }
+
+        .char-btn:hover {
+            background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+        }
+
+        .char-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #334155;
+        }
+
+        /* Fixed mechanical scan zone overlay with corrected box-sizing property */
+        .scan-zone {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 72px;
+            height: 100%;
+            border: 3px solid var(--accent-yellow);
+            background-color: rgba(230, 161, 0, 0.15);
+            box-sizing: border-box;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 0;
+        }
+
+        .scan-zone::before, .scan-zone::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 4px;
+            background-color: var(--accent-yellow);
+        }
+
+        .scan-zone-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--accent-yellow);
+            background-color: #000000;
+            padding: 0 4px;
+            border-radius: 2px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .industrial-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-yellow),
+                var(--accent-yellow) 10px,
+                #000000 10px,
+                #000000 20px
+            );
+            z-index: 5;
+        }
+
+        /* Reduced motion step controls */
+        .manual-step-control {
+            display: none;
+            margin-bottom: 0.5rem;
+        }
+
+        body.reduced-motion .manual-step-control {
+            display: inline-block;
+        }
+
+        .summary-card {
+            background-color: var(--bg-card-alt);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .summary-value {
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: right;
+        }
+
+        .simulation-notice {
+            background-color: #fffbe2;
+            border: 1px solid #f6e05e;
+            border-radius: var(--radius);
+            padding: 1rem;
+            font-size: 0.88rem;
+            color: #744210;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .portal-card {
+                padding: 1.25rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .button-row {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-content">
+            <div class="brand-title">
+                <span>Permiso Vecinal</span>
+                <span class="badge-simulated">Solicitud simulada</span>
+            </div>
+            <div class="step-indicator" id="stepIndicator">
+                Paso 1 de 3: Datos de la solicitud
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="portal-card">
+
+            <section id="step1" class="step-panel active">
+                <h1 class="section-title">1. Datos de la solicitud</h1>
+                <p class="section-description">Complete el formulario para iniciar la verificación administrativa de estacionamiento vecinal.</p>
+
+                <form id="formDatos" novalidate>
+                    <div class="form-group">
+                        <label for="inputNombre">Nombre y apellido <span class="required-star">*</span></label>
+                        <input type="text" id="inputNombre" name="nombre" required placeholder="Ej. María González">
+                        <div class="error-message" id="errNombre">Por favor ingrese su nombre y apellido.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail">Correo electrónico <span class="required-star">*</span></label>
+                        <input type="email" id="inputEmail" name="email" required placeholder="ejemplo@correo.com">
+                        <div class="error-message" id="errEmail">Ingrese un correo electrónico válido.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputPatente">Patente del vehículo <span class="required-star">*</span></label>
+                        <input type="text" id="inputPatente" name="patente" required placeholder="Ej. AB123CD o AAA123" maxlength="8">
+                        <div class="input-hint">Admite entre 6 y 7 caracteres alfanuméricos. Formatos antiguos y nuevos.</div>
+                        <div class="error-message" id="errPatente">La patente debe contener entre 6 y 7 caracteres alfanuméricos.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="selectTipoPermiso">Tipo de permiso <span class="required-star">*</span></label>
+                        <select id="selectTipoPermiso" name="tipoPermiso" required>
+                            <option value="residente">Residente</option>
+                            <option value="visita">Visita</option>
+                            <option value="carga">Carga y descarga</option>
+                        </select>
+                    </div>
+
+                    <div class="button-row">
+                        <button type="submit" class="btn btn-primary">Continuar a verificación</button>
+                    </div>
+                </form>
+            </section>
+
+            <section id="step2" class="step-panel">
+                <h1 class="section-title">2. Verificación mecánica de patente</h1>
+                <p class="section-description">Capture los caracteres requeridos haciendo clic en las cintas únicamente cuando pasen por el centro de la zona de escaneo.</p>
+
+                <div class="verification-dashboard">
+                    <div class="dashboard-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Patente objetivo</div>
+                            <div class="stat-value" id="dispPatenteObjetivo">------</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Próximo carácter</div>
+                            <div class="stat-value" id="dispProximoCaracter">-</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Errores / Demoras</div>
+                            <div class="stat-value" id="dispErrores">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Velocidad cintas</div>
+                            <div class="stat-value" id="dispVelocidad">90 px/s</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-display">
+                        <div class="progress-title">Progreso de verificación manual</div>
+                        <div class="progress-slots" id="dispProgreso">_ _ _ _ _ _</div>
+                    </div>
+
+                    <div class="live-feedback info" id="ariaLiveFeedback" aria-live="polite">
+                        Inicie la captura presionando la letra o número correspondiente dentro del marco amarillo.
+                    </div>
+                </div>
+
+                <!-- Conveyor 1: Letters -->
+                <div class="conveyor-section">
+                    <div class="conveyor-label">
+                        <span>Cinta de letras (A-Z)</span>
+                        <button type="button" class="btn btn-secondary manual-step-control" id="btnAvanzarLetras">Avanzar cinta de letras</button>
+                    </div>
+                    <div class="conveyor-container" id="containerLetras">
+                        <div class="industrial-pattern"></div>
+                        <div class="scan-zone" id="scanZoneLetras">
+                            <span class="scan-zone-label">SCAN</span>
+                        </div>
+                        <div class="conveyor-track" id="trackLetras"></div>
+                    </div>
+                </div>
+
+                <!-- Conveyor 2: Numbers -->
+                <div class="conveyor-section">
+                    <div class="conveyor-label">
+                        <span>Cinta de números (0-9)</span>
+                        <button type="button" class="btn btn-secondary manual-step-control" id="btnAvanzarNumeros">Avanzar cinta de números</button>
+                    </div>
+                    <div class="conveyor-container" id="containerNumeros">
+                        <div class="industrial-pattern"></div>
+                        <div class="scan-zone" id="scanZoneNumeros">
+                            <span class="scan-zone-label">SCAN</span>
+                        </div>
+                        <div class="conveyor-track" id="trackNumeros"></div>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button type="button" class="btn btn-warning" id="btnInvertir">Invertir recorrido (+1 Demora)</button>
+                    <button type="button" class="btn btn-secondary" id="btnReiniciarVerificacion">Reiniciar verificación</button>
+                    <button type="button" class="btn btn-secondary" id="btnVolverDatos">Volver a los datos</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmarSolicitud" disabled>Confirmar solicitud</button>
+                </div>
+            </section>
+
+            <section id="step3" class="step-panel">
+                <h1 class="section-title">3. Confirmación de la solicitud</h1>
+                <p class="section-description">Su trámite simulado ha finalizado correctamente con la validación mecánica de la patente.</p>
+
+                <div class="summary-card">
+                    <div class="summary-row">
+                        <span class="summary-label">Estado:</span>
+                        <span class="summary-value" style="color: var(--success);">Solicitud registrada</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Nombre y apellido:</span>
+                        <span class="summary-value" id="sumNombre">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Correo electrónico:</span>
+                        <span class="summary-value" id="sumEmail">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Patente verificada:</span>
+                        <span class="summary-value" id="sumPatente">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Tipo de permiso:</span>
+                        <span class="summary-value" id="sumTipoPermiso">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Demoras administrativas acumuladas:</span>
+                        <span class="summary-value" id="sumErrores">0</span>
+                    </div>
+                </div>
+
+                <div class="simulation-notice">
+                    <strong>Aviso importante:</strong> Esta es una simulación interactiva. No se ha enviado ni registrado ningún permiso real en ningún organismo municipal ni base de datos pública.
+                </div>
+
+                <div class="button-row">
+                    <button type="button" class="btn btn-primary" id="btnNuevaSolicitud">Nueva solicitud</button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>Portal de Permisos Vecinales - Aplicación de prueba. No se envían ni almacenan datos personales.</p>
+    </footer>
+
+    <script>
+        // Letters and Numbers definitions
+        const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        const NUMBERS = "0123456789".split("");
+
+        // Belt track item stride constants (50px width + 10px gap)
+        const ITEM_STRIDE = 60;
+        const LETTERS_SET_WIDTH = LETTERS.length * ITEM_STRIDE; // 1560px
+        const NUMBERS_SET_WIDTH = NUMBERS.length * ITEM_STRIDE; // 600px
+
+        // Minimal App State
+        let paso = 1;
+        let datos = {
+            nombre: '',
+            email: '',
+            patente: '',
+            tipoPermiso: 'residente'
+        };
+        let patenteObjetivo = '';
+        let caracteresVerificados = '';
+        let direccion = 1; // 1: right, -1: left
+        let velocidadBase = 90; // base px per second
+        let velocidadMultiplier = 1.0;
+        let offsetLetras = 0;
+        let offsetNumeros = 0;
+        let capturaBloqueada = false;
+        let cantidadErrores = 0;
+        let movimientoReducido = false;
+
+        // Animation handle
+        let animFrameId = null;
+        let lastTimestamp = null;
+
+        // DOM Element references
+        const step1El = document.getElementById('step1');
+        const step2El = document.getElementById('step2');
+        const step3El = document.getElementById('step3');
+        const stepIndicatorEl = document.getElementById('stepIndicator');
+
+        const formDatos = document.getElementById('formDatos');
+        const inputNombre = document.getElementById('inputNombre');
+        const inputEmail = document.getElementById('inputEmail');
+        const inputPatente = document.getElementById('inputPatente');
+        const selectTipoPermiso = document.getElementById('selectTipoPermiso');
+
+        const errNombre = document.getElementById('errNombre');
+        const errEmail = document.getElementById('errEmail');
+        const errPatente = document.getElementById('errPatente');
+
+        const dispPatenteObjetivo = document.getElementById('dispPatenteObjetivo');
+        const dispProximoCaracter = document.getElementById('dispProximoCaracter');
+        const dispErrores = document.getElementById('dispErrores');
+        const dispVelocidad = document.getElementById('dispVelocidad');
+        const dispProgreso = document.getElementById('dispProgreso');
+        const ariaLiveFeedback = document.getElementById('ariaLiveFeedback');
+
+        const trackLetras = document.getElementById('trackLetras');
+        const trackNumeros = document.getElementById('trackNumeros');
+        const scanZoneLetras = document.getElementById('scanZoneLetras');
+        const scanZoneNumeros = document.getElementById('scanZoneNumeros');
+
+        const btnInvertir = document.getElementById('btnInvertir');
+        const btnReiniciarVerificacion = document.getElementById('btnReiniciarVerificacion');
+        const btnVolverDatos = document.getElementById('btnVolverDatos');
+        const btnConfirmarSolicitud = document.getElementById('btnConfirmarSolicitud');
+
+        const btnAvanzarLetras = document.getElementById('btnAvanzarLetras');
+        const btnAvanzarNumeros = document.getElementById('btnAvanzarNumeros');
+
+        const sumNombre = document.getElementById('sumNombre');
+        const sumEmail = document.getElementById('sumEmail');
+        const sumPatente = document.getElementById('sumPatente');
+        const sumTipoPermiso = document.getElementById('sumTipoPermiso');
+        const sumErrores = document.getElementById('sumErrores');
+        const btnNuevaSolicitud = document.getElementById('btnNuevaSolicitud');
+
+        function checkReducedMotion() {
+            const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+            movimientoReducido = mediaQuery.matches;
+            if (movimientoReducido) {
+                document.body.classList.add('reduced-motion');
+            } else {
+                document.body.classList.remove('reduced-motion');
+            }
+        }
+
+        // Build HTML DOM buttons for belts
+        function populateBelts() {
+            // Build letters belt (repeat sequence 3 times for continuous looping)
+            trackLetras.innerHTML = '';
+            for (let r = 0; r < 3; r++) {
+                LETTERS.forEach(char => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'char-btn';
+                    btn.textContent = char;
+                    btn.dataset.char = char;
+                    btn.addEventListener('click', (e) => handleCharCapture(e, char, scanZoneLetras));
+                    trackLetras.appendChild(btn);
+                });
+            }
+
+            // Build numbers belt (repeat sequence 7 times)
+            trackNumeros.innerHTML = '';
+            for (let r = 0; r < 7; r++) {
+                NUMBERS.forEach(char => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'char-btn';
+                    btn.textContent = char;
+                    btn.dataset.char = char;
+                    btn.addEventListener('click', (e) => handleCharCapture(e, char, scanZoneNumeros));
+                    trackNumeros.appendChild(btn);
+                });
+            }
+        }
+
+        function setStep(newPaso) {
+            paso = newPaso;
+            step1El.classList.remove('active');
+            step2El.classList.remove('active');
+            step3El.classList.remove('active');
+
+            if (paso === 1) {
+                step1El.classList.add('active');
+                stepIndicatorEl.textContent = 'Paso 1 de 3: Datos de la solicitud';
+                stopAnimationLoop();
+            } else if (paso === 2) {
+                step2El.classList.add('active');
+                stepIndicatorEl.textContent = 'Paso 2 de 3: Verificación mecánica de patente';
+                resetVerificationState();
+                startAnimationLoop();
+            } else if (paso === 3) {
+                step3El.classList.add('active');
+                stepIndicatorEl.textContent = 'Paso 3 de 3: Confirmación';
+                stopAnimationLoop();
+                populateSummary();
+            }
+        }
+
+        formDatos.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let isValid = true;
+            
+            const nombreVal = inputNombre.value.trim();
+            if (!nombreVal) {
+                errNombre.style.display = 'block';
+                isValid = false;
+            } else {
+                errNombre.style.display = 'none';
+            }
+
+            const emailVal = inputEmail.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailVal || !emailRegex.test(emailVal)) {
+                errEmail.style.display = 'block';
+                isValid = false;
+            } else {
+                errEmail.style.display = 'none';
+            }
+
+            // Normalize plate: uppercase, remove spaces
+            let patenteVal = inputPatente.value.toUpperCase().replace(/\s+/g, '');
+            inputPatente.value = patenteVal;
+            
+            const patenteRegex = /^[A-Z0-9]{6,7}$/;
+            if (!patenteVal || !patenteRegex.test(patenteVal)) {
+                errPatente.style.display = 'block';
+                isValid = false;
+            } else {
+                errPatente.style.display = 'none';
+            }
+
+            if (isValid) {
+                datos.nombre = nombreVal;
+                datos.email = emailVal;
+                datos.patente = patenteVal;
+                datos.tipoPermiso = selectTipoPermiso.value;
+                patenteObjetivo = patenteVal;
+                setStep(2);
+            }
+        });
+
+        function resetVerificationState() {
+            caracteresVerificados = '';
+            direccion = 1;
+            velocidadMultiplier = 1.0;
+            cantidadErrores = 0;
+            capturaBloqueada = false;
+            offsetLetras = 0;
+            offsetNumeros = 0;
+
+            dispPatenteObjetivo.textContent = patenteObjetivo;
+            renderBeltPositions();
+            updateVerificationUI();
+            setFeedback("Inicie la captura presionando la letra o número correspondiente dentro del marco amarillo.", "info");
+        }
+
+        function updateVerificationUI() {
+            // Update progress slots
+            let progressStr = '';
+            for (let i = 0; i < patenteObjetivo.length; i++) {
+                if (i < caracteresVerificados.length) {
+                    progressStr += caracteresVerificados[i] + ' ';
+                } else {
+                    progressStr += '_ ';
+                }
+            }
+            dispProgreso.textContent = progressStr.trim();
+
+            // Next expected character
+            if (caracteresVerificados.length < patenteObjetivo.length) {
+                dispProximoCaracter.textContent = patenteObjetivo[caracteresVerificados.length];
+                btnConfirmarSolicitud.disabled = true;
+            } else {
+                dispProximoCaracter.textContent = 'COMPLETO';
+                btnConfirmarSolicitud.disabled = false;
+            }
+
+            dispErrores.textContent = cantidadErrores;
+            
+            const currentSpeedPx = Math.round(velocidadBase * velocidadMultiplier);
+            dispVelocidad.textContent = `${currentSpeedPx} px/s`;
+        }
+
+        function setFeedback(msg, type = "info") {
+            ariaLiveFeedback.textContent = msg;
+            ariaLiveFeedback.className = `live-feedback ${type}`;
+        }
+
+        function handleCharCapture(event, clickedChar, scanZoneEl) {
+            if (capturaBloqueada) return;
+
+            // Debounce lock for 180 ms
+            capturaBloqueada = true;
+            setTimeout(() => {
+                capturaBloqueada = false;
+            }, 180);
+
+            // Get bounding client rects for button and target scan zone
+            const btnEl = event.currentTarget;
+            const btnRect = btnEl.getBoundingClientRect();
+            const btnCenter = btnRect.left + (btnRect.width / 2);
+
+            const zoneRect = scanZoneEl.getBoundingClientRect();
+
+            // Check if center of button is within scanning zone bounds
+            const isInsideScanZone = (btnCenter >= zoneRect.left && btnCenter <= zoneRect.right);
+
+            if (!isInsideScanZone) {
+                setFeedback("Fuera de la zona de escaneo", "warning");
+                return;
+            }
+
+            // Button center IS inside scan zone
+            const expectedChar = patenteObjetivo[caracteresVerificados.length];
+
+            if (clickedChar === expectedChar) {
+                // Correct character capture
+                caracteresVerificados += clickedChar;
+                velocidadMultiplier *= 1.10; // Increase speed by 10%
+                direccion = -direccion; // Invert conveyor direction
+                
+                if (caracteresVerificados.length === patenteObjetivo.length) {
+                    setFeedback("Patente verificada con éxito. Puede confirmar la solicitud.", "success");
+                } else {
+                    setFeedback(`Carácter ${clickedChar} capturado correctamente.`, "success");
+                }
+            } else {
+                // Incorrect character capture
+                if (caracteresVerificados.length > 0) {
+                    caracteresVerificados = caracteresVerificados.slice(0, -1);
+                }
+                cantidadErrores++;
+                direccion = -direccion; // Invert conveyor direction
+                setFeedback(`Carácter incorrecto. Retroceso de posición (+1 Error). Esperado: ${expectedChar}`, "warning");
+            }
+
+            updateVerificationUI();
+        }
+
+        btnInvertir.addEventListener('click', function() {
+            if (paso !== 2) return;
+            direccion = -direccion;
+            cantidadErrores++;
+            updateVerificationUI();
+            setFeedback("Recorrido invertido. Demora administrativa sumada.", "warning");
+        });
+
+        // Fully reset verification state using existing function
+        btnReiniciarVerificacion.addEventListener('click', function() {
+            if (paso !== 2) return;
+            resetVerificationState();
+            setFeedback("Verificación reiniciada.", "info");
+        });
+
+        btnVolverDatos.addEventListener('click', function() {
+            setStep(1);
+        });
+
+        btnConfirmarSolicitud.addEventListener('click', function() {
+            if (caracteresVerificados === patenteObjetivo) {
+                setStep(3);
+            }
+        });
+
+        // Manual controls for reduced motion mode
+        btnAvanzarLetras.addEventListener('click', function() {
+            offsetLetras = (offsetLetras + ITEM_STRIDE * direccion) % LETTERS_SET_WIDTH;
+            if (offsetLetras < 0) offsetLetras += LETTERS_SET_WIDTH;
+            renderBeltPositions();
+        });
+
+        btnAvanzarNumeros.addEventListener('click', function() {
+            offsetNumeros = (offsetNumeros + ITEM_STRIDE * direccion) % NUMBERS_SET_WIDTH;
+            if (offsetNumeros < 0) offsetNumeros += NUMBERS_SET_WIDTH;
+            renderBeltPositions();
+        });
+
+        function startAnimationLoop() {
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+            lastTimestamp = null;
+            animFrameId = requestAnimationFrame(animationStep);
+        }
+
+        function stopAnimationLoop() {
+            if (animFrameId) {
+                cancelAnimationFrame(animFrameId);
+                animFrameId = null;
+            }
+        }
+
+        function animationStep(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const deltaSec = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+
+            // Only auto-move belts if reduced motion is disabled and verification is not complete
+            if (!movimientoReducido && caracteresVerificados.length < patenteObjetivo.length) {
+                const currentSpeed = velocidadBase * velocidadMultiplier;
+                const distance = currentSpeed * deltaSec * direccion;
+
+                offsetLetras = (offsetLetras + distance) % LETTERS_SET_WIDTH;
+                if (offsetLetras < 0) offsetLetras += LETTERS_SET_WIDTH;
+
+                offsetNumeros = (offsetNumeros + distance) % NUMBERS_SET_WIDTH;
+                if (offsetNumeros < 0) offsetNumeros += NUMBERS_SET_WIDTH;
+
+                renderBeltPositions();
+            }
+
+            if (paso === 2) {
+                animFrameId = requestAnimationFrame(animationStep);
+            }
+        }
+
+        function renderBeltPositions() {
+            trackLetras.style.transform = `translateX(${-offsetLetras}px)`;
+            trackNumeros.style.transform = `translateX(${-offsetNumeros}px)`;
+        }
+
+        function populateSummary() {
+            sumNombre.textContent = datos.nombre;
+            sumEmail.textContent = datos.email;
+            sumPatente.textContent = datos.patente;
+
+            let tipoTexto = 'Residente';
+            if (datos.tipoPermiso === 'visita') tipoTexto = 'Visita';
+            if (datos.tipoPermiso === 'carga') tipoTexto = 'Carga y descarga';
+            
+            sumTipoPermiso.textContent = tipoTexto;
+            sumErrores.textContent = cantidadErrores;
+        }
+
+        btnNuevaSolicitud.addEventListener('click', function() {
+            // Complete reset
+            datos = { nombre: '', email: '', patente: '', tipoPermiso: 'residente' };
+            patenteObjetivo = '';
+            caracteresVerificados = '';
+            inputNombre.value = '';
+            inputEmail.value = '';
+            inputPatente.value = '';
+            selectTipoPermiso.value = 'residente';
+            errNombre.style.display = 'none';
+            errEmail.style.display = 'none';
+            errPatente.style.display = 'none';
+            setStep(1);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            checkReducedMotion();
+            populateBelts();
+            setStep(1);
+
+            window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', checkReducedMotion);
+        });
+    </script>
+</body>
+</html>

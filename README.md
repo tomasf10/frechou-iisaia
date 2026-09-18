@@ -6,7 +6,7 @@ Repositorio de entregas de la materia **Introducción a la Ingeniería de Softwa
 
 | Entrega | Carpeta | Estado |
 | --- | --- | --- |
-| TP 1 | `tp1/` | En preparación |
+| TP 1 | `tp1/` | Listo para revisión |
 | TP 2 | `tp2/` | Pendiente |
 | Trabajo Práctico Final | `tp-final/` | Pendiente |
 
